@@ -1,0 +1,6 @@
+
+class Leaderboard
+{
+  public:
+  private:
+};
