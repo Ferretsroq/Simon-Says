@@ -29,6 +29,11 @@ bool g_lastGreenButtonState = 0;
 bool g_yellowButtonState = 0;
 bool g_lastYellowButtonState = 0;
 
+int g_blueButtonValue = -1;
+int g_greenButtonValue = -1;
+int g_redButtonValue = -1;
+int g_yellowButtonValue = -1;
+
 std::vector<State> g_states;
 int g_currentState = 0;
 
@@ -39,6 +44,7 @@ void TurnColorOff(Sequence::Color colorToTurnOff);
 signed char DetectButtonStateChange(int);
 void PrintButtonPresses(void);
 void ChangeStateWithButtonPresses(void);
+void ReadButtons(void);
 
 void setup() 
 {
@@ -64,6 +70,7 @@ void setup()
 void loop() 
 {
   // put your main code here, to run repeatedly:
+  ReadButtons();
   ShowWholeSequence(g_testSequence);
   ChangeStateWithButtonPresses();
   PrintButtonPresses();
@@ -181,48 +188,51 @@ signed char DetectButtonStateChange(int buttonOfInterest)
 
 void PrintButtonPresses(void)
 {
-  int blueButtonState = DetectButtonStateChange(g_blueButtonPin);
-  int greenButtonState = DetectButtonStateChange(g_greenButtonPin);
-  int redButtonState = DetectButtonStateChange(g_redButtonPin);
-  int yellowButtonState = DetectButtonStateChange(g_yellowButtonPin);
+  if(g_blueButtonValue == 1) Serial.println("You pressed the blue button!");
+  else if(g_blueButtonValue == 0) Serial.println("You released the blue button!");
   
-  if(blueButtonState == 1) Serial.println("You pressed the blue button!");
-  else if(blueButtonState == 0) Serial.println("You released the blue button!");
+  if(g_greenButtonValue == 1) Serial.println("You pressed the green button!");
+  else if(g_greenButtonValue == 0) Serial.println("You released the green button!");
   
-  if(greenButtonState == 1) Serial.println("You pressed the green button!");
-  else if(greenButtonState == 0) Serial.println("You released the green button!");
+  if(g_redButtonValue == 1) Serial.println("You pressed the red button!");
+  else if(g_redButtonValue == 0) Serial.println("You released the red button!");
   
-  if(redButtonState == 1) Serial.println("You pressed the red button!");
-  else if(redButtonState == 0) Serial.println("You released the red button!");
-  
-  if(yellowButtonState == 1) Serial.println("You pressed the yellow button!");
-  else if(yellowButtonState == 0) Serial.println("You released the yellow button!");
+  if(g_yellowButtonValue == 1) Serial.println("You pressed the yellow button!");
+  else if(g_yellowButtonValue == 0) Serial.println("You released the yellow button!");
 }
 
 void ChangeStateWithButtonPresses(void)
 {
-  if(DetectButtonStateChange(g_blueButtonPin) == 1)
+  if(g_blueButtonValue == 1)
   {
     g_currentState = g_states[g_currentState].nextState(0); 
     Serial.println(g_currentState); 
   }
   
-  if(DetectButtonStateChange(g_greenButtonPin) == 1)
+  if(g_greenButtonValue == 1)
   {
     g_currentState = g_states[g_currentState].nextState(1); 
     Serial.println(g_currentState);
   }
  
-  if(DetectButtonStateChange(g_redButtonPin) == 1)
+  if(g_redButtonValue == 1)
   {
     g_currentState = g_states[g_currentState].nextState(2); 
     Serial.println(g_currentState);
   }
   
-  if(DetectButtonStateChange(g_yellowButtonPin) == 1)
+  if(g_yellowButtonValue == 1)
   {
     g_currentState = g_states[g_currentState].nextState(3);
     Serial.println(g_currentState);
   }
+}
+
+void ReadButtons(void)
+{
+  g_blueButtonValue = DetectButtonStateChange(g_blueButtonPin);
+  g_greenButtonValue = DetectButtonStateChange(g_greenButtonPin);
+  g_redButtonValue = DetectButtonStateChange(g_redButtonPin);
+  g_yellowButtonValue = DetectButtonStateChange(g_yellowButtonPin);
 }
 
