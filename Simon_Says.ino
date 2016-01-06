@@ -1,8 +1,9 @@
 #include <StandardCplusplus.h>
 #include <vector>
-#include "Sequence.h"
+//#include "Sequence.h"
 #include "Score.h"
 #include "Leaderboard.h"
+#include "State.h"
 
 // Global Variables
 const int g_blueLEDPin = 5;
@@ -15,7 +16,7 @@ const int g_redButtonPin = 8;
 const int g_yellowButtonPin = 11;
 long g_timerForLEDFlashes = 0;
 bool g_lightOnOrOff = 0;
-Sequence g_testSequence = Sequence(0);
+Sequence g_testSequence = Sequence(240);
 int g_colorIndex = 0;
 bool g_redButtonState = 0;
 bool g_lastRedButtonState = 0;
@@ -25,6 +26,9 @@ bool g_greenButtonState = 0;
 bool g_lastGreenButtonState = 0;
 bool g_yellowButtonState = 0;
 bool g_lastYellowButtonState = 0;
+
+std::vector<State> g_states;
+int currentState = 0;
 
 // Function Prototypes
 void ShowColor(Sequence::Color);
@@ -47,19 +51,26 @@ void setup()
   pinMode(g_greenButtonPin, INPUT);
   pinMode(g_redButtonPin, INPUT);
   pinMode(g_yellowButtonPin, INPUT);
+
+  g_states.push_back(State(0,1,2,3));
+  g_states.push_back(State(3,2,3,0));
+  g_states.push_back(State(3,1,1,2));
+  g_states.push_back(State(2,0,0,3));
 }
 
 void loop() 
 {
   // put your main code here, to run repeatedly:
-
   ShowWholeSequence(g_testSequence);
+  currentState = g_states[currentState].nextState(2);
+  Serial.println(currentState);
 
-  
-  /*DetectButtonStateChange(g_greenButtonPin);
+  DetectButtonStateChange(g_blueButtonPin);
+  DetectButtonStateChange(g_greenButtonPin);
   DetectButtonStateChange(g_redButtonPin);
-  DetectButtonStateChange(g_yellowButtonPin);*/
-  PrintButtonPresses(g_redButtonPin);
+  DetectButtonStateChange(g_yellowButtonPin);
+  
+  //PrintButtonPresses(g_redButtonPin);
   
 }
 
@@ -133,8 +144,8 @@ signed char DetectButtonStateChange(int buttonOfInterest)
        g_blueButtonState = digitalRead(g_blueButtonPin);
        if(g_blueButtonState != g_lastBlueButtonState)
        {
-          if(g_blueButtonState) returnedButtonState = 1;
-          else returnedButtonState = 0;
+          if(g_blueButtonState) Serial.println("You pressed the blue button!");
+          else Serial.println("You released the blue button!");
        }
        g_lastBlueButtonState = g_blueButtonState;
        break;
@@ -143,8 +154,8 @@ signed char DetectButtonStateChange(int buttonOfInterest)
        g_greenButtonState = digitalRead(g_greenButtonPin);
        if(g_greenButtonState != g_lastGreenButtonState)
        {
-         if(g_greenButtonState) returnedButtonState = 1;
-         else returnedButtonState = 0;
+         if(g_greenButtonState) Serial.println("You pressed the green button!");
+         else Serial.println("You released the green button!");
        }
        g_lastGreenButtonState = g_greenButtonState;
        break;
@@ -153,8 +164,8 @@ signed char DetectButtonStateChange(int buttonOfInterest)
         g_redButtonState = digitalRead(g_redButtonPin);
         if(g_redButtonState != g_lastRedButtonState)
         {
-          if(g_redButtonState) returnedButtonState = 1;
-          else returnedButtonState = 0;
+          if(g_redButtonState) Serial.println("You pressed the red button!");
+          else Serial.println("You released the red button!");
         }
         g_lastRedButtonState = g_redButtonState;
         break;
@@ -163,8 +174,8 @@ signed char DetectButtonStateChange(int buttonOfInterest)
         g_yellowButtonState = digitalRead(g_yellowButtonPin);
         if(g_yellowButtonState != g_lastYellowButtonState)
         {
-          if(g_yellowButtonState) returnedButtonState = 1;
-          else returnedButtonState = 0;
+          if(g_yellowButtonState) Serial.println("You pressed the yellow button!");
+          else Serial.println("You released the yellow button!");
         }
         g_lastYellowButtonState = g_yellowButtonState;
         break;   

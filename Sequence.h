@@ -17,6 +17,7 @@ class Sequence
     int GiveSequenceLength(void);
     void PrintColors(void);
     void ShowColor(Sequence::Color);
+    void RedefineSequence(std::vector<Sequence::Color>);
     
   private:
     std::vector<Color> order_;
