@@ -7,9 +7,9 @@ Sequence::Sequence(int code)
   {
     sequenceLength_ = 4;
     order_.resize(sequenceLength_);
-    order_[0] = Red;
-    order_[1] = Blue;
-    order_[2] = Green;
+    order_[0] = Blue;
+    order_[1] = Green;
+    order_[2] = Red;
     order_[3] = Yellow; 
   }
   else if(code == 1) // Gives an array of a random size

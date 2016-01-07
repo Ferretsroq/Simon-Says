@@ -6,6 +6,8 @@
 #include "State.h"
 
 // Global Variables
+
+// Assigning the pin values of the buttons, LEDs, and potentiometer
 const int g_blueLEDPin = 2;
 const int g_greenLEDPin = 5;
 const int g_redLEDPin = 4; 
@@ -16,10 +18,15 @@ const int g_greenButtonPin = 9;
 const int g_redButtonPin = 10; 
 const int g_yellowButtonPin = 11;
 
+const int g_potentiometerPin = A0;
+
+// Various variables that will be used in the event loop
+int g_timingInterval = 250;
 long g_timerForLEDFlashes = 0;
 bool g_lightOnOrOff = 0;
-Sequence g_testSequence = Sequence(240);
+Sequence g_testSequence = Sequence(0);
 int g_colorIndex = 0;
+int g_sequenceIndex = 0;
 bool g_redButtonState = 0;
 bool g_lastRedButtonState = 0;
 bool g_blueButtonState = 0;
@@ -45,12 +52,14 @@ signed char DetectButtonStateChange(int);
 void PrintButtonPresses(void);
 void ChangeStateWithButtonPresses(void);
 void ReadButtons(void);
+void DetermineTimingInterval(void);
 
 void setup() 
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  
+
+  // Configuring the pins for input/output
   pinMode(g_blueLEDPin, OUTPUT);
   pinMode(g_greenLEDPin, OUTPUT);
   pinMode(g_redLEDPin, OUTPUT);
@@ -72,10 +81,17 @@ void loop()
   // put your main code here, to run repeatedly:
   ReadButtons();
   ShowWholeSequence(g_testSequence);
-  ChangeStateWithButtonPresses();
   PrintButtonPresses();
-  //Serial.println(g_currentState);  
+  DetermineTimingInterval();
 }
+
+//----------------------------------------
+//------------FUNCTIONS-------------------
+//----------------------------------------
+
+// ShowColor - takes a Sequence::Color as an argument
+// returns nothing
+// Flashes an LED corresponding to the color given.
 
 void ShowColor(Sequence::Color colorToShow)
 {
@@ -93,6 +109,11 @@ void ShowColor(Sequence::Color colorToShow)
   }
   else Serial.println("Error - unknown light to display");
 }
+//----------------------------------------
+
+// TurnColorOff - takes a Sequence::Color as an argument
+// returns nothing 
+// Turns an LED off corresponding to the color given.
 
 void TurnColorOff(Sequence::Color colorToTurnOff)
 {
@@ -111,9 +132,15 @@ void TurnColorOff(Sequence::Color colorToTurnOff)
   else Serial.println("Error - unknown light to display");
 }
 
+//----------------------------------------
+// ShowWholeSequence - takes a sequence object as an argument
+// returns nothing
+// This function will flash the LEDs in
+// the sequence of colors provided, from start to finish.
+
 void ShowWholeSequence(Sequence sequence)
 {
-  if(millis() >= (g_timerForLEDFlashes+250))
+  if(millis() >= (g_timerForLEDFlashes+g_timingInterval))
     {
       if(!g_lightOnOrOff)
       {
@@ -125,13 +152,19 @@ void ShowWholeSequence(Sequence sequence)
         g_lightOnOrOff = 0;
         TurnColorOff(sequence.RetrieveColor(g_colorIndex));
         g_colorIndex++;
+        if(g_colorIndex > g_sequenceIndex)
+        {
+          g_colorIndex = 0;
+          g_sequenceIndex++;
+        }
+        if(g_sequenceIndex >= sequence.GiveSequenceLength()) g_sequenceIndex = 0;
         if(g_colorIndex >= sequence.GiveSequenceLength()) g_colorIndex = 0;
-        //Serial.println(g_colorIndex);
       }
       g_timerForLEDFlashes = millis();
     }
 }
 
+//----------------------------------------
 // DetectButtonStateChange - takes the pin of a button as an argument
 // returns a signed char. 
 // -1 means no state change at all
@@ -186,6 +219,11 @@ signed char DetectButtonStateChange(int buttonOfInterest)
   return returnedButtonState;
 }
 
+//----------------------------------------
+// PrintButtonPresses - takes no argument
+// returns nothing
+// Prints to the serial monitor which button was pressed or released.
+
 void PrintButtonPresses(void)
 {
   if(g_blueButtonValue == 1) Serial.println("You pressed the blue button!");
@@ -200,6 +238,12 @@ void PrintButtonPresses(void)
   if(g_yellowButtonValue == 1) Serial.println("You pressed the yellow button!");
   else if(g_yellowButtonValue == 0) Serial.println("You released the yellow button!");
 }
+
+//----------------------------------------
+// ChangeStateWithButtonPresses - takes no argument
+// returns nothing
+// Advances the state through the state vector based
+// on the current state and the button pressed.
 
 void ChangeStateWithButtonPresses(void)
 {
@@ -228,11 +272,28 @@ void ChangeStateWithButtonPresses(void)
   }
 }
 
+//----------------------------------------
+// ReadButtons - takes no argument
+// returns nothing
+// Assigns global variables based on whether a button has been
+// pressed or released.
+
 void ReadButtons(void)
 {
   g_blueButtonValue = DetectButtonStateChange(g_blueButtonPin);
   g_greenButtonValue = DetectButtonStateChange(g_greenButtonPin);
   g_redButtonValue = DetectButtonStateChange(g_redButtonPin);
   g_yellowButtonValue = DetectButtonStateChange(g_yellowButtonPin);
+}
+
+//----------------------------------------
+// DetermineTimingInterval - takes no argument
+// returns nothing
+// Assigns the global timing interval based on
+// the analog input from a potentiometer.
+void DetermineTimingInterval(void)
+{
+  int potentiometerValue = analogRead(g_potentiometerPin);
+  g_timingInterval = map(potentiometerValue, 0, 1023, 100, 1000);
 }
 
