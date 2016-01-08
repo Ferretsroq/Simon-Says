@@ -3,7 +3,7 @@
 //#include "Sequence.h"
 #include "Score.h"
 #include "Leaderboard.h"
-#include "State.h"
+#include "GameState.h"
 
 // Global Variables
 
@@ -23,7 +23,7 @@ const int g_potentiometerPin = A0;
 // Various variables that will be used in the event loop
 int g_timingInterval = 250;
 long g_timerForLEDFlashes = 0;
-bool g_lightOnOrOff = 0;
+bool g_lightIsOn = 0;
 Sequence g_testSequence = Sequence(0);
 int g_colorIndex = 0;
 int g_sequenceIndex = 0;
@@ -41,8 +41,7 @@ int g_greenButtonValue = -1;
 int g_redButtonValue = -1;
 int g_yellowButtonValue = -1;
 
-std::vector<State> g_states;
-int g_currentState = 0;
+GameState g_gameState;
 
 // Function Prototypes
 void ShowColor(Sequence::Color);
@@ -50,7 +49,6 @@ void ShowWholeSequence(Sequence);
 void TurnColorOff(Sequence::Color colorToTurnOff);
 signed char DetectButtonStateChange(int);
 void PrintButtonPresses(void);
-void ChangeStateWithButtonPresses(void);
 void ReadButtons(void);
 void DetermineTimingInterval(void);
 
@@ -69,11 +67,6 @@ void setup()
   pinMode(g_greenButtonPin, INPUT);
   pinMode(g_redButtonPin, INPUT);
   pinMode(g_yellowButtonPin, INPUT);
-
-  g_states.push_back(State(0,1,2,3));
-  g_states.push_back(State(3,2,3,0));
-  g_states.push_back(State(3,1,1,2));
-  g_states.push_back(State(2,0,0,3));
 }
 
 void loop() 
@@ -142,15 +135,18 @@ void ShowWholeSequence(Sequence sequence)
 {
   if(millis() >= (g_timerForLEDFlashes+g_timingInterval))
     {
-      if(!g_lightOnOrOff)
+      if(!g_lightIsOn)
       {
-        g_lightOnOrOff = 1;
-        ShowColor(sequence.RetrieveColor(g_colorIndex));
+        g_lightIsOn = 1;
+        //ShowColor(sequence.RetrieveColor(g_colorIndex));
+        ShowColor(g_gameState.ReturnCurrentColor());
       }
-      else if(g_lightOnOrOff)
+      else if(g_lightIsOn)
       {
-        g_lightOnOrOff = 0;
-        TurnColorOff(sequence.RetrieveColor(g_colorIndex));
+        g_lightIsOn = 0;
+        //TurnColorOff(sequence.RetrieveColor(g_colorIndex));
+        TurnColorOff(g_gameState.ReturnCurrentColor());
+        g_gameState.ReturnNextColor();
         g_colorIndex++;
         if(g_colorIndex > g_sequenceIndex)
         {
@@ -226,7 +222,7 @@ signed char DetectButtonStateChange(int buttonOfInterest)
 
 void PrintButtonPresses(void)
 {
-  if(g_blueButtonValue == 1) Serial.println("You pressed the blue button!");
+  if(g_blueButtonValue == 1)Serial.println("You pressed the blue button!");
   else if(g_blueButtonValue == 0) Serial.println("You released the blue button!");
   
   if(g_greenButtonValue == 1) Serial.println("You pressed the green button!");
@@ -239,38 +235,6 @@ void PrintButtonPresses(void)
   else if(g_yellowButtonValue == 0) Serial.println("You released the yellow button!");
 }
 
-//----------------------------------------
-// ChangeStateWithButtonPresses - takes no argument
-// returns nothing
-// Advances the state through the state vector based
-// on the current state and the button pressed.
-
-void ChangeStateWithButtonPresses(void)
-{
-  if(g_blueButtonValue == 1)
-  {
-    g_currentState = g_states[g_currentState].nextState(0); 
-    Serial.println(g_currentState); 
-  }
-  
-  if(g_greenButtonValue == 1)
-  {
-    g_currentState = g_states[g_currentState].nextState(1); 
-    Serial.println(g_currentState);
-  }
- 
-  if(g_redButtonValue == 1)
-  {
-    g_currentState = g_states[g_currentState].nextState(2); 
-    Serial.println(g_currentState);
-  }
-  
-  if(g_yellowButtonValue == 1)
-  {
-    g_currentState = g_states[g_currentState].nextState(3);
-    Serial.println(g_currentState);
-  }
-}
 
 //----------------------------------------
 // ReadButtons - takes no argument

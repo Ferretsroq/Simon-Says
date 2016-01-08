@@ -7,9 +7,9 @@ class Sequence
   enum Color 
     {
       UnknownColor = -1,
-      Red = 0,
-      Blue,
+      Blue = 0,
       Green,
+      Red,
       Yellow,
     };
     Sequence(int code);
