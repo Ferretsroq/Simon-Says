@@ -24,9 +24,7 @@ const int g_potentiometerPin = A0;
 int g_timingInterval = 250;
 long g_timerForLEDFlashes = 0;
 bool g_lightIsOn = 0;
-Sequence g_testSequence = Sequence(0);
-int g_colorIndex = 0;
-int g_sequenceIndex = 0;
+
 bool g_redButtonState = 0;
 bool g_lastRedButtonState = 0;
 bool g_blueButtonState = 0;
@@ -45,7 +43,7 @@ GameState g_gameState;
 
 // Function Prototypes
 void ShowColor(Sequence::Color);
-void ShowWholeSequence(Sequence);
+void ShowWholeSequence(GameState);
 void TurnColorOff(Sequence::Color colorToTurnOff);
 signed char DetectButtonStateChange(int);
 void PrintButtonPresses(void);
@@ -73,7 +71,7 @@ void loop()
 {
   // put your main code here, to run repeatedly:
   ReadButtons();
-  ShowWholeSequence(g_testSequence);
+  ShowWholeSequence(g_gameState);
   PrintButtonPresses();
   DetermineTimingInterval();
 }
@@ -131,30 +129,20 @@ void TurnColorOff(Sequence::Color colorToTurnOff)
 // This function will flash the LEDs in
 // the sequence of colors provided, from start to finish.
 
-void ShowWholeSequence(Sequence sequence)
+void ShowWholeSequence(GameState gameState)
 {
   if(millis() >= (g_timerForLEDFlashes+g_timingInterval))
     {
       if(!g_lightIsOn)
       {
         g_lightIsOn = 1;
-        //ShowColor(sequence.RetrieveColor(g_colorIndex));
-        ShowColor(g_gameState.ReturnCurrentColor());
+        ShowColor(gameState.ReturnCurrentColor());
       }
       else if(g_lightIsOn)
       {
         g_lightIsOn = 0;
-        //TurnColorOff(sequence.RetrieveColor(g_colorIndex));
-        TurnColorOff(g_gameState.ReturnCurrentColor());
+        TurnColorOff(gameState.ReturnCurrentColor());
         g_gameState.ReturnNextColor();
-        g_colorIndex++;
-        if(g_colorIndex > g_sequenceIndex)
-        {
-          g_colorIndex = 0;
-          g_sequenceIndex++;
-        }
-        if(g_sequenceIndex >= sequence.GiveSequenceLength()) g_sequenceIndex = 0;
-        if(g_colorIndex >= sequence.GiveSequenceLength()) g_colorIndex = 0;
       }
       g_timerForLEDFlashes = millis();
     }
