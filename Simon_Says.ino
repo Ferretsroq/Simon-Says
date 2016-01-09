@@ -39,7 +39,7 @@ int g_greenButtonValue = -1;
 int g_redButtonValue = -1;
 int g_yellowButtonValue = -1;
 
-GameState g_gameState;
+GameState g_gameState = GameState(0);
 
 // Function Prototypes
 void ShowColor(Sequence::Color);

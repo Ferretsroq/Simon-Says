@@ -1,7 +1,7 @@
 #include "GameState.h"
 #include "Arduino.h"
 
-GameState::GameState():sequence_(0)
+GameState::GameState(int sequenceToBeCreated):sequence_(sequenceToBeCreated)
 {
   
 }
