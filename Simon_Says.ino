@@ -39,7 +39,7 @@ int g_greenButtonValue = -1;
 int g_redButtonValue = -1;
 int g_yellowButtonValue = -1;
 
-GameState g_gameState = GameState(0);
+GameState g_gameState = GameState(1);
 
 // Function Prototypes
 void ShowColor(Sequence::Color);
@@ -142,7 +142,7 @@ void ShowWholeSequence(GameState gameState)
       {
         g_lightIsOn = 0;
         TurnColorOff(gameState.ReturnCurrentColor());
-        g_gameState.ReturnNextColor();
+        g_gameState.MoveToNextColor();
       }
       g_timerForLEDFlashes = millis();
     }

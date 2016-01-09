@@ -6,7 +6,7 @@ class GameState
 {
   public:
     GameState(int sequenceToBeCreated);
-    Sequence::Color ReturnNextColor(void);
+    void MoveToNextColor(void);
     Sequence::Color ReturnCurrentColor(void);
     bool UserPressedButton(Sequence::Color);
     Sequence::Color RetrieveSequenceColor(int colorIndex);

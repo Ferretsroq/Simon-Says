@@ -3,12 +3,11 @@
 
 GameState::GameState(int sequenceToBeCreated):sequence_(sequenceToBeCreated)
 {
-  
+  sequence_.PrintColors();
 }
 
-Sequence::Color GameState::ReturnNextColor(void)
+void GameState::MoveToNextColor(void)
 {
-  Sequence::Color temporaryColorVariable = sequence_.RetrieveColor(colorIndex_);
   colorIndex_++;
   if(colorIndex_ > sequenceIndex_) 
   {
@@ -17,12 +16,11 @@ Sequence::Color GameState::ReturnNextColor(void)
   }
   if(sequenceIndex_ >= sequence_.GiveSequenceLength()) sequenceIndex_ = 0;
   if(colorIndex_ >= sequence_.GiveSequenceLength()) colorIndex_ = 0;
-  return temporaryColorVariable;
 }
 
 Sequence::Color GameState::ReturnCurrentColor(void)
 {
-  return (Sequence::Color)colorIndex_;
+  return sequence_.RetrieveColor(colorIndex_);
 }
 
 bool GameState::UserPressedButton(Sequence::Color buttonPressed)
