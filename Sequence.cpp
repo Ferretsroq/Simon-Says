@@ -56,7 +56,6 @@ int Sequence::GiveSequenceLength(void)
 
 void Sequence::RedefineSequence(std::vector<Sequence::Color> newSequenceValues)
 {
-  
   order_ = newSequenceValues;
 }
 

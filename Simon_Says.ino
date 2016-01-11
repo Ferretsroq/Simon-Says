@@ -21,9 +21,11 @@ const int g_yellowButtonPin = 11;
 const int g_potentiometerPin = A0;
 
 // Various variables that will be used in the event loop
-int g_timingInterval = 250;
+int g_timingInterval = 0;
 long g_timerForLEDFlashes = 0;
 bool g_lightIsOn = 0;
+bool g_lightsAreFlashing = 0;
+int g_turnCounter = 0;
 
 bool g_redButtonState = 0;
 bool g_lastRedButtonState = 0;
@@ -39,7 +41,7 @@ int g_greenButtonValue = -1;
 int g_redButtonValue = -1;
 int g_yellowButtonValue = -1;
 
-GameState g_gameState = GameState(1);
+GameState g_gameState = GameState(0);
 
 // Function Prototypes
 void ShowColor(Sequence::Color);
@@ -49,6 +51,7 @@ signed char DetectButtonStateChange(int);
 void PrintButtonPresses(void);
 void ReadButtons(void);
 void DetermineTimingInterval(void);
+void ShowCurrentTurnSequence(GameState);
 
 void setup() 
 {
@@ -71,9 +74,9 @@ void loop()
 {
   // put your main code here, to run repeatedly:
   ReadButtons();
+  DetermineTimingInterval();
   ShowWholeSequence(g_gameState);
   PrintButtonPresses();
-  DetermineTimingInterval();
 }
 
 //----------------------------------------
@@ -124,7 +127,7 @@ void TurnColorOff(Sequence::Color colorToTurnOff)
 }
 
 //----------------------------------------
-// ShowWholeSequence - takes a sequence object as an argument
+// ShowWholeSequence - takes a GameState object as an argument
 // returns nothing
 // This function will flash the LEDs in
 // the sequence of colors provided, from start to finish.
@@ -146,6 +149,17 @@ void ShowWholeSequence(GameState gameState)
       }
       g_timerForLEDFlashes = millis();
     }
+}
+
+//----------------------------------------
+// ShowCurrentTurnSequence - takes a sequence object as an argument
+// returns nothing
+// This function will flash the LEDs in
+// the sequence of colors for the current turn.
+
+void ShowCurrentTurnSequence(GameState gameState)
+{
+  
 }
 
 //----------------------------------------

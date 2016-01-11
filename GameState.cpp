@@ -13,9 +13,11 @@ void GameState::MoveToNextColor(void)
   {
     colorIndex_ = 0;
     sequenceIndex_++;
+    currentTurn_++;
   }
   if(sequenceIndex_ >= sequence_.GiveSequenceLength()) sequenceIndex_ = 0;
   if(colorIndex_ >= sequence_.GiveSequenceLength()) colorIndex_ = 0;
+  if(currentTurn_ >= sequence_.GiveSequenceLength()) currentTurn_ = 0;
 }
 
 Sequence::Color GameState::ReturnCurrentColor(void)
@@ -36,3 +38,9 @@ Sequence::Color GameState::RetrieveSequenceColor(int colorIndex)
   }
   else return Sequence::UnknownColor;
 }
+
+int GameState::ReturnCurrentTurn(void)
+{
+  return currentTurn_;
+}
+
