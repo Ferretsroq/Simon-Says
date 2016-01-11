@@ -13,8 +13,15 @@ void GameState::MoveToNextColor(void)
   {
     colorIndex_ = 0;
     currentTurn_++;
-    currentState_ = GameState::WaitingForButtonPresses;
-    Serial.println("We are now waiting for button presses!");
+    if(currentState_ == GameState::ShowingLights)
+    {
+      currentState_ = GameState::WaitingForButtonPresses;
+      Serial.println("We are now waiting for button presses!");
+    }
+    if(currentState_ == GameState::GameOver)
+    {
+      sequenceIndex_++;
+    }
   }
   if(sequenceIndex_ >= sequence_.GiveSequenceLength()) sequenceIndex_ = 0;
   if(colorIndex_ >= sequence_.GiveSequenceLength()) colorIndex_ = 0;

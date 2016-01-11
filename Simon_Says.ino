@@ -53,6 +53,7 @@ void ReadButtons(void);
 void DetermineTimingInterval(void);
 void ShowCurrentTurnSequence(GameState);
 void CompareButtonsToSequence(void);
+void GameOver(void);
 
 void setup() 
 {
@@ -87,7 +88,7 @@ void loop()
   }
   if(g_gameState.ReturnCurrentState() == GameState::GameOver)
   {
-    Serial.println("YOU LOSE");
+    GameOver();
   }
 }
 
@@ -282,6 +283,39 @@ void CompareButtonsToSequence(void)
   if(g_greenButtonValue == 1) g_gameState.CompareToColor(Sequence::Green);
   if(g_redButtonValue == 1) g_gameState.CompareToColor(Sequence::Red);
   if(g_yellowButtonValue == 1) g_gameState.CompareToColor(Sequence::Yellow);
-  
+}
+
+void GameOver(void)
+{
+  Serial.println("YOU LOSE");
+  if(millis() >= (g_timerForLEDFlashes+75))
+    {
+      if(!g_lightIsOn)
+      {
+        g_lightIsOn = 1;
+        ShowColor(g_gameState.ReturnCurrentColor());
+      }
+      else if(g_lightIsOn)
+      {
+        g_lightIsOn = 0;
+        TurnColorOff(g_gameState.ReturnCurrentColor());
+        g_gameState.MoveToNextColor();
+      }
+      g_timerForLEDFlashes = millis();
+    }
+  ReadButtons();
+  if(g_blueButtonValue == 1 ||
+     g_greenButtonValue == 1 ||
+     g_redButtonValue == 1 ||
+     g_yellowButtonValue == 1)
+     {
+      g_gameState = GameState(1);
+      TurnColorOff(Sequence::Blue);
+      TurnColorOff(Sequence::Green);
+      TurnColorOff(Sequence::Red);
+      TurnColorOff(Sequence::Yellow);
+      delay(1000);
+     }
+     
 }
 
