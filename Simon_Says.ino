@@ -52,6 +52,7 @@ void PrintButtonPresses(void);
 void ReadButtons(void);
 void DetermineTimingInterval(void);
 void ShowCurrentTurnSequence(GameState);
+void CompareButtonsToSequence(void);
 
 void setup() 
 {
@@ -73,10 +74,21 @@ void setup()
 void loop() 
 {
   // put your main code here, to run repeatedly:
-  ReadButtons();
   DetermineTimingInterval();
-  ShowWholeSequence(g_gameState);
-  PrintButtonPresses();
+  if(g_gameState.ReturnCurrentState() == GameState::ShowingLights)
+  {
+      ShowWholeSequence(g_gameState);
+  }
+  if(g_gameState.ReturnCurrentState() == GameState::WaitingForButtonPresses)
+  {
+    ReadButtons();
+    //PrintButtonPresses();
+    CompareButtonsToSequence();
+  }
+  if(g_gameState.ReturnCurrentState() == GameState::GameOver)
+  {
+    Serial.println("YOU LOSE");
+  }
 }
 
 //----------------------------------------
@@ -224,7 +236,7 @@ signed char DetectButtonStateChange(int buttonOfInterest)
 
 void PrintButtonPresses(void)
 {
-  if(g_blueButtonValue == 1)Serial.println("You pressed the blue button!");
+  if(g_blueButtonValue == 1) Serial.println("You pressed the blue button!");
   else if(g_blueButtonValue == 0) Serial.println("You released the blue button!");
   
   if(g_greenButtonValue == 1) Serial.println("You pressed the green button!");
@@ -261,5 +273,15 @@ void DetermineTimingInterval(void)
 {
   int potentiometerValue = analogRead(g_potentiometerPin);
   g_timingInterval = map(potentiometerValue, 0, 1023, 100, 1000);
+}
+
+
+void CompareButtonsToSequence(void)
+{
+  if(g_blueButtonValue == 1) g_gameState.CompareToColor(Sequence::Blue);
+  if(g_greenButtonValue == 1) g_gameState.CompareToColor(Sequence::Green);
+  if(g_redButtonValue == 1) g_gameState.CompareToColor(Sequence::Red);
+  if(g_yellowButtonValue == 1) g_gameState.CompareToColor(Sequence::Yellow);
+  
 }
 
