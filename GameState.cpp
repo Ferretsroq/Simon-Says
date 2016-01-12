@@ -4,6 +4,9 @@
 GameState::GameState(int sequenceToBeCreated):sequence_(sequenceToBeCreated)
 {
   sequence_.PrintColors();
+  colorIndex_ = 0;
+  sequenceIndex_ = 0;
+  currentState_ = GameState::ShowingLights;
 }
 
 void GameState::MoveToNextColor(void)
@@ -102,6 +105,7 @@ bool GameState::CompareToColor(Sequence::Color inputColor)
   {
     colorIndex_ = 0;
     sequenceIndex_++;
+    if(sequenceIndex_ >= sequence_.GiveSequenceLength()) sequenceIndex_ = 0;
     currentState_ = GameState::ShowingLights;
     Serial.println("We are now showing lights!");
   }
