@@ -1,3 +1,5 @@
+// Score
+// This class is not currently used.
 
 class Score
 {

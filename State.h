@@ -1,3 +1,7 @@
+// State
+// This was used to learn how to code a state machine.
+// This class is no longer used.
+
 #include <StandardCplusplus.h>
 #include <vector>
 #include "Sequence.h"

@@ -1,3 +1,7 @@
+// Sequence
+// This class holds a vector of colors
+// To be used during the game
+
 #include <StandardCplusplus.h>
 #include <vector>
 

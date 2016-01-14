@@ -1,6 +1,12 @@
+// Simon Says
+// This is a program written to to learn object-oriented programming
+// using an Arduino microcontroller during a break from school.
+// This game will flash LEDs in a particular order, and the player then needs to press
+// buttons corresponding to the order of colors.
+// Made by Seth Rutman
+
 #include <StandardCplusplus.h>
 #include <vector>
-//#include "Sequence.h"
 #include "Score.h"
 #include "Leaderboard.h"
 #include "GameState.h"
@@ -51,7 +57,6 @@ signed char DetectButtonStateChange(int);
 void PrintButtonPresses(void);
 void ReadButtons(void);
 void DetermineTimingInterval(void);
-void ShowCurrentTurnSequence(GameState);
 void CompareButtonsToSequence(void);
 void GameOver(void);
 
@@ -75,19 +80,21 @@ void setup()
 void loop() 
 {
   // put your main code here, to run repeatedly:
-  DetermineTimingInterval();
-  if(g_gameState.ReturnCurrentState() == GameState::ShowingLights)
+  DetermineTimingInterval(); //Determines how fast the lights show during the game
+  if(g_gameState.ReturnCurrentState() == GameState::ShowingLights) 
   {
+      // During this phase of the game, show the lights in order
       ShowWholeSequence(g_gameState);
   }
   if(g_gameState.ReturnCurrentState() == GameState::WaitingForButtonPresses)
   {
+    // During this phase of the game, read buttons and determine whether they're correct
     ReadButtons();
-    //PrintButtonPresses();
     CompareButtonsToSequence();
   }
   if(g_gameState.ReturnCurrentState() == GameState::GameOver)
   {
+    // Taunt the player if they lose
     GameOver();
   }
 }
@@ -116,8 +123,8 @@ void ShowColor(Sequence::Color colorToShow)
   }
   else Serial.println("Error - unknown light to display");
 }
-//----------------------------------------
 
+//----------------------------------------
 // TurnColorOff - takes a Sequence::Color as an argument
 // returns nothing 
 // Turns an LED off corresponding to the color given.
@@ -162,17 +169,6 @@ void ShowWholeSequence(GameState gameState)
       }
       g_timerForLEDFlashes = millis();
     }
-}
-
-//----------------------------------------
-// ShowCurrentTurnSequence - takes a sequence object as an argument
-// returns nothing
-// This function will flash the LEDs in
-// the sequence of colors for the current turn.
-
-void ShowCurrentTurnSequence(GameState gameState)
-{
-  
 }
 
 //----------------------------------------
@@ -250,7 +246,6 @@ void PrintButtonPresses(void)
   else if(g_yellowButtonValue == 0) Serial.println("You released the yellow button!");
 }
 
-
 //----------------------------------------
 // ReadButtons - takes no argument
 // returns nothing
@@ -270,12 +265,18 @@ void ReadButtons(void)
 // returns nothing
 // Assigns the global timing interval based on
 // the analog input from a potentiometer.
+
 void DetermineTimingInterval(void)
 {
   int potentiometerValue = analogRead(g_potentiometerPin);
   g_timingInterval = map(potentiometerValue, 0, 1023, 100, 1000);
 }
 
+//----------------------------------------
+// CompareButtonsToSequence - takes no argument
+// returns nothing
+// Compares the buttons pressed to the sequence in the
+// GameState object
 
 void CompareButtonsToSequence(void)
 {
@@ -284,6 +285,14 @@ void CompareButtonsToSequence(void)
   if(g_redButtonValue == 1) g_gameState.CompareToColor(Sequence::Red);
   if(g_yellowButtonValue == 1) g_gameState.CompareToColor(Sequence::Yellow);
 }
+
+//----------------------------------------
+// GameOver - takes no argument
+// returns nothing
+// Flashes the lights in the sequence order
+// and spams the serial monitor. 
+// Pressing any button starts a new game
+// with a random sequence.
 
 void GameOver(void)
 {

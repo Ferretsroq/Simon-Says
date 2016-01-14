@@ -1,6 +1,14 @@
 #include "Sequence.h"
 #include "Arduino.h"
 
+//----------------------------------------
+// Sequence constructor - takes an int as an argument
+// Populates the Sequence with a vector of Sequence::Colors
+// The input code determines what sequence will be created
+// 0 - sequence will be 0, 1, 2, 3. Used for testing.
+// 1 - sequence will be a random length between 1 and 10, with random colors.
+// Any other number - sequence will be of the specified length, with random colors.
+
 Sequence::Sequence(int code)
 {
   if(code == 0) // Gives a known array
@@ -32,6 +40,11 @@ Sequence::Sequence(int code)
   }
 }
 
+//----------------------------------------
+// RetrieveColor - takes an int as an argument
+// returns a Sequence::Color
+// returns the color at the specified index in the sequence vector.
+
 Sequence::Color Sequence::RetrieveColor(int colorIndex)
 {
   if((colorIndex <= sequenceLength_) && (colorIndex >= 0)) // Needs to be a valid value
@@ -40,6 +53,11 @@ Sequence::Color Sequence::RetrieveColor(int colorIndex)
   }
   else return UnknownColor;
 }
+//----------------------------------------
+// PrintColors - takes no argument
+// returns nothing
+// Prints the color vector to the serial monitor
+// Used for testing and debugging.
 
 void Sequence::PrintColors(void)
 {
@@ -49,10 +67,20 @@ void Sequence::PrintColors(void)
   }
 }
 
+//----------------------------------------
+// GiveSequenceLength - takes no argument
+// returns an int
+// Returns the length of the vector of colors
+
 int Sequence::GiveSequenceLength(void)
 {
   return sequenceLength_;
 }
+
+//----------------------------------------
+// RedefineSequence - takes a vector of Sequence::Colors as an argument
+// returns nothing
+// Redefines the vector of colors to a new specified vector of colors.
 
 void Sequence::RedefineSequence(std::vector<Sequence::Color> newSequenceValues)
 {
