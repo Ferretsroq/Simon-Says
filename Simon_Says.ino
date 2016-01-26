@@ -323,6 +323,7 @@ void GameOver(void)
       TurnColorOff(Sequence::Green);
       TurnColorOff(Sequence::Red);
       TurnColorOff(Sequence::Yellow);
+      g_lightIsOn = 0;
       delay(1000);
      }
      
